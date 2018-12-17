@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Real-Time Clock</title>
+    <style>
+        body{ font-family: Courier New; font-size: 25px; }
+    </style>
+    
+</head>
+<body>
+    <br /><br />
+    <table align="center">
+        <tr>
+            <td id="timeText" align="center">
+                Time: &nbsp;&nbsp; ERROR
+                <br />
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <svg id="container" width="400" height="400" enable-background="new 0 0 512 512" >
+                    <path id="arcSeconds" fill="none" stroke="orangered" stroke-width="7" />
+                    <path id="arcMinutes" fill="none" stroke="blueviolet" stroke-width="7" />
+                    <path id="arcHours" fill="none" stroke="greenyellow" stroke-width="7" />
+                </svg>
+            </td>
+        </tr>
+    </table>
+</body>
+<script>
+    getTime();
+    var d, h, m, s, ms, t, timeString, hDeg, mDeg, sDeg;
+            
+    function normalizeValue(n){
+        if(n<10)
+            n="0"+n.toString();
+        return n;
+    }
+    
+    function createTimeString(){
+        timeString = normalizeValue(h)+":"+normalizeValue(m)+":"+normalizeValue(s);
+    }
+        
+    function getTime() {
+        d = new Date();
+        h = d.getHours();
+        m = d.getMinutes();
+        s = d.getSeconds();
+        ms = d.getMilliseconds();
+        createTimeString();
+                    
+        setTime(); 
+        setClock();
+        t = setTimeout(getTime, 1);
+    }
+            
+    function setTime(){
+        window.document.getElementById("timeText").innerHTML = timeString;
+    }
+            
+    function getArcCoordinates(cX, cY, r, degAngle) {
+        var radAngle = (degAngle-90)*(Math.PI/180.0);
+        return {x: cX + (r * Math.cos(radAngle)),   y: cY + (r * Math.sin(radAngle))};
+    }
+                  
+    function setArc(cX, cY, r, angle){
+        var start = getArcCoordinates(cX, cY, r, angle);
+        var end = getArcCoordinates(cX, cY, r, 0);
+        var largeArcFlag= (angle > 180)? 1:0;
+        var d = "M "+start.x+", "+start.y+", A "+r+", "+r+", 0, "+largeArcFlag+", 0, "+end.x+", "+end.y;
+        return d;       
+    }
+                
+    function setClock(){
+        sDeg=s*6+(ms*0.006);
+        mDeg=m*6+(sDeg/360)*6;
+        hDeg=h*30+(mDeg/360)*30;
+        document.getElementById("arcSeconds").setAttribute("d", setArc(200, 200, 150, sDeg));
+        document.getElementById("arcMinutes").setAttribute("d", setArc(200, 200, 170, mDeg));
+        document.getElementById("arcHours").setAttribute("d", setArc(200, 200, 190, hDeg));
+    }
+            
+</script>
+</html>
