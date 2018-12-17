@@ -69,7 +69,7 @@
     function setArc(cX, cY, r, angle){
         var start = getArcCoordinates(cX, cY, r, angle);
         var end = getArcCoordinates(cX, cY, r, 0);
-        var largeArcFlag= (angle > 180)? 1:0;
+        var largeArcFlag = (angle > 180)? 1:0;
         var d = "M "+start.x+", "+start.y+", A "+r+", "+r+", 0, "+largeArcFlag+", 0, "+end.x+", "+end.y;
         return d;       
     }
